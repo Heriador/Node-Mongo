@@ -1,12 +1,16 @@
-const { Router } = require("express");
-const router = Router();
-const {
+import { Router } from "express";
+import { 
     renderSignUpForm,
     signUp,
     renderSignInForm,
-    signin,
+    signIn,
     logOut,
-} = require("../controllers/users.controller");
+} from "../controllers/users.controller.js";
+
+
+
+const router = Router();
+
 
 //SIGNUP
 router.get("/signup", renderSignUpForm);
@@ -14,9 +18,10 @@ router.post('/signup',signUp)
 
 //SINGIN
 router.get('/signin', renderSignInForm)
-router.post('/signin', signin);
+router.post('/signin', signIn);
 
 //LOGOUT
 router.get('/logout', logOut);
 
-module.exports = router;
+export default router;
+

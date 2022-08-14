@@ -1,8 +1,9 @@
-const { Router } = require('express');
+import { Router } from 'express';
+import { renderIndex } from '../controllers/index.controller.js';
+
 const router = Router();
-const { renderIndex, renderAbout} = require('../controllers/index.controller')
 
 router.get('/', renderIndex);
 
 
-module.exports = router;
+export default router;

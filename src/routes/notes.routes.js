@@ -1,15 +1,17 @@
-const { Router } = require("express");
-const router = Router();
-const { isAuthenticated } = require('../helpers/auth');
+import { Router } from "express";
+import { isAuthenticated } from '../helpers/auth.js'
+import { 
+        renderNoteForm, 
+        createNewNote, 
+        renderNotes,
+        renderEditForm,
+        editNote,
+        deleteNote
+} from "../controllers/notes.controller.js";
 
-const {
-    renderNoteForm,
-    createNewNote,
-    renderNotes,
-    renderEditForm,
-    editNote,
-    deleteNote,
-} = require("../controllers/notes.controller");
+const router = Router();
+
+
 
 //New Note
 router.get("/notes/add",isAuthenticated ,renderNoteForm);
@@ -25,4 +27,4 @@ router.put("/notes/edit/:id",isAuthenticated , editNote);
 //Delete Note
 router.delete("/notes/delete/:id",isAuthenticated , deleteNote);
 
-module.exports = router;
+export default router;

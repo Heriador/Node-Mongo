@@ -1,11 +1,10 @@
-const Note = require('../models/Note');
-const notesCtrl = {};
+import Note from '../models/Note.js';
 
-notesCtrl.renderNoteForm = (req,res) =>{
+export const renderNoteForm = (req,res) =>{
     res.render('notes/newNote');
 }
 
-notesCtrl.createNewNote = async (req,res) => {
+export const createNewNote = async (req,res) => {
     const {title, description} = req.body;
     const newNote = new Note({title,description});
     newNote.user = req.user._id;
@@ -14,12 +13,12 @@ notesCtrl.createNewNote = async (req,res) => {
     res.redirect('/notes');
 }
 
-notesCtrl.renderNotes = async (req,res) =>{
+export const renderNotes = async (req,res) =>{
     const notes = await Note.find({user: req.user._id}).lean().sort({createdAt: 'desc'});
     res.render('notes/all_notes', { notes })
 }
 
-notesCtrl.renderEditForm = async (req,res) =>{
+export const renderEditForm = async (req,res) =>{
     const note = await Note.findById(req.params.id).lean();
     if(note.user != req.user._id){
         req.flash('error_msg','Not In Your Notes')
@@ -28,17 +27,15 @@ notesCtrl.renderEditForm = async (req,res) =>{
     res.render('notes/editNote', {note});
 }
 
-notesCtrl.editNote = async (req,res) =>{
+export const editNote = async (req,res) =>{
     const {title, description} = req.body;
     await Note.findByIdAndUpdate(req.params.id,{title,description})
     req.flash('succes_msg', 'Note Updated Succesfully');
     res.redirect('/notes');
 }
 
-notesCtrl.deleteNote = async (req,res) =>{
+export const deleteNote = async (req,res) =>{
     await Note.findByIdAndDelete(req.params.id);
     req.flash('succes_msg', 'Note Deleted Succesfully');
     res.redirect('/notes');
 }
-
-module.exports = notesCtrl;

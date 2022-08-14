@@ -1,30 +1,39 @@
-if(process.env.NODE_ENV !== 'production'){
-    require('dotenv').config();
-}
 
-const express = require('express');
-const exphbs = require('express-handlebars');
-const path = require('path');
+import 'dotenv/config';
+
+import express from 'express';
+import exphbs from 'express-handlebars';
+import { join, dirname} from 'path';
+import { fileURLToPath } from 'url';
+import morgan from 'morgan';
+import methodOverride from 'method-override';
+import flash from 'connect-flash';
+import session from 'express-session';
+import passport from 'passport';
+
+import './config/passport.js';
+import './database.js'
+
+import indexRoutes from './routes/index.routes.js';
+import usersRoutes from './routes/users.routes.js';
+import notesRoutes from './routes/notes.routes.js';
+
 const port = process.env.PORT;
-const morgan = require('morgan');
-const methodOverride = require('method-override');
-const flash = require('connect-flash');
-const session =require('express-session');
-const passport = require('passport');
-require('./config/passport');
-require('./database')
+
 
 
 // Initializations
 const app = express ();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 
 // Setting
 app.set('port', process.env.PORT || 4000);
-app.set('views', path.join(__dirname,'views'));
+app.set('views', join(__dirname,'views'));
 app.engine('.hbs', exphbs.engine({
     defaultLayout: 'main',
-    layoutsDir: path.join(app.get('views'), 'layouts'),
-    partialsDir: path.join(app.get('views'), 'partials'),
+    layoutsDir: join(app.get('views'), 'layouts'),
+    partialsDir: join(app.get('views'), 'partials'),
     extname: '.hbs'
 }));
 app.set('view engine', 'hbs');
@@ -53,15 +62,15 @@ app.use((req,res,next) =>{
 
 
 // Routes
-app.use(require('./routes/index.routes'));
-app.use(require('./routes/notes.routes'));
-app.use(require('./routes/users.routes'));
+app.use(indexRoutes);
+app.use(usersRoutes);
+app.use(notesRoutes);
 
 
 //Static files
-app.use(express.static(path.join(__dirname,'public')))
+app.use(express.static(join(__dirname,'public')))
 
 
-app.listen(port, () =>{
-    console.log(`server on port ${port}`);
-} )
+app.listen(port)
+
+console.log(`server on port ${port}`);

@@ -1,5 +1,8 @@
-const {Schema, model} = require('mongoose');
-const bycrypt=require('bcryptjs');
+
+import pkg from 'mongoose';
+import bycrypt from 'bcryptjs';
+
+const { Schema, model } = pkg;
 
 const UserSchema = new Schema({
     name: {type:String, required:true},
@@ -18,4 +21,4 @@ UserSchema.methods.matchPassword = async function(password) {
     return await bycrypt.compare(password, this.password)
 }
 
-module.exports = model('User', UserSchema, 'Users');
+export default model('User', UserSchema, 'Users');

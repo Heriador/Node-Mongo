@@ -51,8 +51,10 @@ export const signIn = passport.authenticate('local',{
 });
 
 export const logOut = (req,res) =>{
-    req.logOut();
-    req.flash('succes_msg', 'You are logged out now');
-    res.redirect('/signin');
+    req.logOut(()=> {
+        req.flash('succes_msg', 'You are logged out now');
+        res.redirect('/signin');
+    });
+    
 }
 

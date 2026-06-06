@@ -1,6 +1,4 @@
-import pkg from 'mongoose';
-
-const {Schema, model} = pkg
+import { Schema, model } from '../helpers/mongoose.js';
 
 const NotesSchema = new Schema({
     title:{

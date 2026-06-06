@@ -1,12 +1,14 @@
 import User from '../models/User.js';
 import passport from 'passport';
+import { catchAsync } from '../helpers/catchAsync.js';
+import { successRedirect, errorRedirect } from '../helpers/flashRedirect.js';
 
 
 export const renderSignUpForm = (req,res) =>{
     res.render('user/signup')
 }
 
-export const signUp = async (req,res) =>{
+export const signUp = catchAsync(async (req,res) =>{
     const errors = [];
     const {name,email,password,confirm_password} = req.body;
     if(password != confirm_password){
@@ -26,18 +28,16 @@ export const signUp = async (req,res) =>{
     else{
         const emailUser = await User.findOne({email});
         if(emailUser){
-            req.flash('error_msg','The email is already on use.');
-            res.redirect('/signup')
+            errorRedirect(req, res, 'The email is already on use.', '/signup');
         }
         else{
             const newUser = new User({name,email,password});
             newUser.password = await newUser.encryptPassword(password);
             await newUser.save();
-            req.flash('succes_msg', 'Successfully registered')
-            res.redirect('/signin');
+            successRedirect(req, res, 'Successfully registered', '/signin');
         }
     }
-}
+});
 
 export const renderSignInForm = (req,res)=>{
     res.render('user/signin');
@@ -52,9 +52,7 @@ export const signIn = passport.authenticate('local',{
 
 export const logOut = (req,res) =>{
     req.logOut(()=> {
-        req.flash('succes_msg', 'You are logged out now');
-        res.redirect('/signin');
+        successRedirect(req, res, 'You are logged out now', '/signin');
     });
     
 }
-

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { isAuthenticated } from '../helpers/auth.js'
+import { checkNoteOwnership } from '../helpers/noteOwnership.js';
 import { 
         renderNoteForm, 
         createNewNote, 
@@ -11,20 +12,21 @@ import {
 
 const router = Router();
 
-
+// All note routes require authentication
+router.use(isAuthenticated);
 
 //New Note
-router.get("/notes/add",isAuthenticated ,renderNoteForm);
-router.post("/notes/new-note",isAuthenticated , createNewNote);
+router.get("/notes/add", renderNoteForm);
+router.post("/notes/new-note", createNewNote);
 
 //Get All Notes
-router.get("/notes",isAuthenticated , renderNotes);
+router.get("/notes", renderNotes);
 
 //Edits Notes
-router.get("/notes/edit/:id",isAuthenticated , renderEditForm);
-router.put("/notes/edit/:id",isAuthenticated , editNote);
+router.get("/notes/edit/:id", checkNoteOwnership, renderEditForm);
+router.put("/notes/edit/:id", checkNoteOwnership, editNote);
 
 //Delete Note
-router.delete("/notes/delete/:id",isAuthenticated , deleteNote);
+router.delete("/notes/delete/:id", deleteNote);
 
 export default router;

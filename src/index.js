@@ -71,7 +71,35 @@ app.use(notesRoutes);
 //Static files
 app.use(express.static(join(__dirname,'public')))
 
+// 404 handler
+app.use((req, res) => {
+    res.status(404).render('error', {
+        layout: 'main',
+        error: 'Page not found'
+    });
+});
 
-app.listen(port)
+// Global error-handling middleware
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err.stack || err);
+    res.status(500).render('error', {
+        layout: 'main',
+        error: 'Something went wrong. Please try again later.'
+    });
+});
 
-console.log(`server on port ${port}`);
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+}).on('error', (err) => {
+    console.error('Failed to start server:', err.message);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Rejection:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1);
+});

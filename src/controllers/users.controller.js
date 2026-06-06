@@ -13,8 +13,8 @@ export const signUp = async (req,res) =>{
         errors.push({text: 'Passwords do not match'});
         
     }
-    if(password.length < 4){
-        errors.push({text: 'Password must be at least 4 characters'})
+    if(password.length < 8){
+        errors.push({text: 'Password must be at least 8 characters'})
     }
     if(errors.length > 0){
         res.render('user/signup',{

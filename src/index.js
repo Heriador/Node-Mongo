@@ -11,6 +11,8 @@ import methodOverride from 'method-override';
 import flash from 'connect-flash';
 import session from 'express-session';
 import passport from 'passport';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 import './config/passport.js';
 import './database.js'
@@ -40,13 +42,29 @@ app.engine('.hbs', exphbs.engine({
 app.set('view engine', 'hbs');
 
 // Middlewares
-app.use(morgan('dev'));
+app.use(helmet());
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.urlencoded({extended: false}));
 app.use(methodOverride('_method'));
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: 'Too many attempts, please try again later'
+});
+app.use('/signin', authLimiter);
+app.use('/signup', authLimiter);
+
 app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true
+    secret: process.env.SESSION_SECRET || 'changeme-use-env-var',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 1000 * 60 * 60 * 24
+    }
 }))
 app.use(passport.initialize());
 app.use(passport.session());
